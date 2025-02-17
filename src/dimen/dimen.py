@@ -1,6 +1,6 @@
 import pygame as p
 
-WIDTH = HEIGHT = 768
+WIDTH = HEIGHT = 512
 DIMENSION = 8
 
 SQ_SIZE = HEIGHT // DIMENSION
@@ -11,3 +11,7 @@ COLOURS = [
     p.Color("dark gray"),
     p.Color("white")
 ]
+
+WHITE_COLOUR = p.Color("white")
+DARK_GRAY_COLOUR = p.Color("dark gray")
+DARK_BLUE_COLOUR = p.Color("olivedrab")
