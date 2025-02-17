@@ -1,14 +1,8 @@
 
 
-class ChessMain():
-    def __init__(self):
-        self.board = [
-            ["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"],
-            ["bp", "bp", "bp", "bp", "bp", "bp", "bp", "bp"],
-            ["--", "--", "--", "--", "--", "--", "--", "--"],
-            ["--", "--", "--", "--", "--", "--", "--", "--"],
-            ["--", "--", "--", "--", "--", "--", "--", "--"],
-            ["--", "--", "--", "--", "--", "--", "--", "--"],
-            ["wp", "wp", "wp", "wp", "wp", "wp", "wp", "wp"]
-            ["wR", "wN", "ww", "wQ", "wK", "ww", "wN", "wR"]
-        ]
+import pygame as p
+
+from chess import Chess_Engine
+
+
+WIDTH = HEIGT = 512
