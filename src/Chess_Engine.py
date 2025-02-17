@@ -41,7 +41,6 @@ class Move:
     # Reverses the conversion for converting col -> files
     cols_to_files = { value: key for key, value in files_to_cols.items() }
 
-
     def __init__(self, start_sq, end_sq, board):
         self.start_row = start_sq[0]
         self.start_col = start_sq[1]
