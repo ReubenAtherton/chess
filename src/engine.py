@@ -1,6 +1,5 @@
 from src.dimen.dimen import DIMENSION
 
-
 class GameState:
     def __init__(self):
 
@@ -26,7 +25,7 @@ class GameState:
         self.moveLog.append(move)
         print(self.moveLog[-1].start_col)
 
-        self.whiteToMove = False
+        self.whiteToMove = not self.whiteToMove
 
     def undo_move(self):
 
@@ -38,17 +37,16 @@ class GameState:
 
             self.whiteToMove = not self.whiteToMove
 
-
     def get_valid_moves(self):
         return self.get_all_possible_moves()
 
     def get_all_possible_moves(self):
-        moves = [Move((6, 4), (4, 4), self.board)]
+        moves = []
         for row in range(len(self.board)):
             for col in range(len(self.board[row])):
                 turn = self.board[row][col][0]
 
-                if (turn == 'w' and self.whiteToMove) and (turn == 'b' and not self.whiteToMove):
+                if (turn == 'w' and self.whiteToMove) or (turn == 'b' and not self.whiteToMove):
                     piece = self.board[row][col][1]
                     if piece == 'p':
                         self.get_pawn_moves(row, col, moves)
@@ -58,7 +56,33 @@ class GameState:
         return moves
 
     def get_pawn_moves(self, row, col, moves):
-        pass
+        if self.whiteToMove:
+            if self.board[row - 1][col] == "--": # One square pawn advance
+                moves.append(Move((row, col), (row - 1, col), self.board))
+                if row == 6 and self.board[row - 2][col] == "--": # Two square pawn advance
+                    moves.append(Move((row, col), (row - 2, col), self.board))
+
+            if col - 1 >= 0:
+                if self.board[row - 1][col - 1][0] == 'b':
+                    moves.append(Move((row, col), (row - 1, col -1 ), self.board))
+            if col + 1 <= 7:
+                if self.board[row - 1][col + 1][0] == 'b':
+                    moves.append(Move((row, col), (row - 1, col + 1), self.board))
+
+        else:
+            if self.board[row + 1][col] == "--":  # One square pawn advance
+                moves.append(Move((row, col), (row + 1, col), self.board))
+                if row == 1 and self.board[row + 2][col] == "--":  # Two square pawn advance
+                    moves.append(Move((row, col), (row + 2, col), self.board))
+
+            if col - 1 >= 0:
+                if self.board[row + 1][col - 1][0] == 'w':
+                    moves.append(Move((row, col), (row + 1, col -1 ), self.board))
+            if col + 1 <= 7:
+                if self.board[row + 1][col + 1][0] == 'w':
+                    moves.append(Move((row, col), (row + 1, col + 1), self.board))
+
+
 
     def get_rook_moves(self, row, col, moves):
         pass

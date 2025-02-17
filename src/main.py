@@ -1,14 +1,15 @@
 import pygame as p
+
 from src import engine
-from src.dimen.dimen import DIMENSION, IMAGES, WIDTH, HEIGHT, SQ_SIZE, COLOURS, MAX_FPS, WHITE_COLOUR, DARK_GRAY_COLOUR, \
-    DARK_BLUE_COLOUR
+from src.dimen.dimen import DIMENSION, IMAGES, WIDTH, HEIGHT, SQ_SIZE, MAX_FPS, BACKGROUND_COLOR, SQUARE_COLOUR, \
+    SQUARE_SELECTED_COLOUR, SQUARE_COLOUR_2
 
 
 def main():
     p.init()
     screen = p.display.set_mode((WIDTH, HEIGHT))
     clock = p.time.Clock()
-    screen.fill(WHITE_COLOUR)
+    screen.fill(BACKGROUND_COLOR)
     game_state = engine.GameState()
     valid_moves = game_state.get_valid_moves()
     move_made = False # Flag variable for when a move is made
@@ -37,7 +38,6 @@ def main():
 
                 if len(player_clicks) == 2:
                     move = engine.Move(player_clicks[0], player_clicks[1], game_state.board)
-                    print(move.get_chess_notation())
                     if move in valid_moves:
                         game_state.make_move(move)
                         move_made = True
@@ -53,7 +53,7 @@ def main():
             valid_moves = game_state.get_valid_moves()
             move_made = False
 
-        draw_game_state(screen, game_state)
+        draw_game_state(screen, game_state, sq_selected)
         clock.tick(MAX_FPS)
         p.display.flip()
 
@@ -65,20 +65,22 @@ def load_images():
     for piece in pieces:
         IMAGES[piece] = p.transform.scale(p.image.load(f"images/{piece}.png"), (SQ_SIZE, SQ_SIZE))
 
-def  draw_game_state(screen, game_state):
-    draw_board(screen)
+def  draw_game_state(screen, game_state, sq_selected):
+    draw_board(screen, sq_selected)
     draw_pieces(screen, game_state.board)
 
-def draw_board(screen):
-
+def draw_board(screen, sq_selected):
     for row in range(DIMENSION):
         for col in range(DIMENSION):
 
             # Set chess board colours
             if (row + col) % 2 == 0:
-                colour = WHITE_COLOUR
+                colour = SQUARE_COLOUR
             else:
-                colour = DARK_GRAY_COLOUR
+                colour = SQUARE_COLOUR_2
+
+            if (row, col) == sq_selected:
+                colour = SQUARE_SELECTED_COLOUR
 
             p.draw.rect(screen, colour, p.Rect(col *SQ_SIZE, row * SQ_SIZE, SQ_SIZE, SQ_SIZE))
 

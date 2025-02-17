@@ -7,11 +7,11 @@ SQ_SIZE = HEIGHT // DIMENSION
 MAX_FPS = 15
 IMAGES = {}
 
-COLOURS = [
-    p.Color("dark gray"),
-    p.Color("white")
-]
+BACKGROUND_COLOR = p.Color("white")
+SQUARE_COLOUR = p.Color("beige")
+SQUARE_COLOUR_2 = p.Color("palegreen4")
+SQUARE_SELECTED_COLOUR = p.Color("slategray3")
 
-WHITE_COLOUR = p.Color("white")
-DARK_GRAY_COLOUR = p.Color("dark gray")
-DARK_BLUE_COLOUR = p.Color("olivedrab")
+# Colours for future choices
+# palegreen4
+# turquoise4
