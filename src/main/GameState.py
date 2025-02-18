@@ -59,12 +59,12 @@ class GameState:
         return moves
 
     def get_pawn_moves(self, row, col, moves):
+
         if self.whiteToMove:
             if self.board[row - 1][col] == "--": # One square pawn advance
                 moves.append(Move((row, col), (row - 1, col), self.board))
                 if row == 6 and self.board[row - 2][col] == "--": # Two square pawn advance
                     moves.append(Move((row, col), (row - 2, col), self.board))
-                    print(f"start sq: {row}, {col} -- end sq: {row-2}, {col}")
 
             if col - 1 >= 0:
                 if self.board[row - 1][col - 1][0] == 'b':
@@ -88,7 +88,7 @@ class GameState:
 
     def get_rook_moves(self, row, col, moves):
         enemy_color = "b" if self.whiteToMove else "w"  # Determine opponent's pieces
-        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]  # Up, Down, Left, Right
+        directions = [(-1, 0), (0, -1), (1, 0), (0, 1)]  # Up, Down, Left, Right
 
         for direction_row, direction_col in directions:
             new_row, new_col = row + direction_row, col + direction_col
