@@ -44,6 +44,9 @@ def main():
                         move_made = True
                     sq_selected = () # Resets the user clicks
                     player_clicks = []
+                    #
+                    # else:
+                    #     player_clicks = [sq_selected]
 
             elif event.type == p.KEYDOWN:
                 if event.key == p.K_LEFT:

@@ -15,6 +15,14 @@ class GameState:
             ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"]
         ]
 
+        self.move_functions = {'p': self.get_pawn_moves, 'R': self.get_rook_moves_2,
+                               'B': self.get_bishop_moves, 'N': self.get_knight_moves,
+                               'Q': self.get_queen_moves, 'K': self.get_king_moves}
+        #
+        # {'p': self.get_pawn_moves, 'R': self.get_rook_moves_2,
+        #  'B': self.get_bishop_moves, 'N': self.get_knight_moves,
+        #  'Q': self.get_queen_moves, 'K': self.get_king_moves}
+        #
         self.whiteToMove = True
         self.moveLog = []
 
@@ -27,7 +35,6 @@ class GameState:
         self.whiteToMove = not self.whiteToMove
 
     def undo_move(self):
-
         if len(self.moveLog) != 0:
             move = self.moveLog.pop()
 
@@ -47,42 +54,37 @@ class GameState:
 
                 if (turn == 'w' and self.whiteToMove) or (turn == 'b' and not self.whiteToMove):
                     piece = self.board[row][col][1]
-                    if piece == 'p':
-                        self.get_pawn_moves(row, col, moves)
 
-                    if piece == 'R':
-                        self.get_rook_moves(row, col, moves)
-
-                    if piece == 'N':
-                        self.get_knight_moves(row, col, moves)
-
-                    if piece == 'B':
-                        self.get_bishop_moves(row, col, moves)
-
-                    if piece == 'Q':
-                        self.get_queen_moves(row, col, moves)
-
+                    self.move_functions[piece](row, col, moves)
         return moves
 
     def get_pawn_moves(self, row, col, moves):
-        direction = -1 if self.whiteToMove else 1  # White moves up (-1), Black moves down (+1)
-        start_row = 6 if self.whiteToMove else 1  # Starting row for two-square move
-        enemy_color = "b" if self.whiteToMove else "w"
+        if self.whiteToMove:
+            if self.board[row - 1][col] == "--": # One square pawn advance
+                moves.append(Move((row, col), (row - 1, col), self.board))
+                if row == 6 and self.board[row - 2][col] == "--": # Two square pawn advance
+                    moves.append(Move((row, col), (row - 2, col), self.board))
+                    print(f"start sq: {row}, {col} -- end sq: {row-2}, {col}")
 
-        # One square forward
-        if self.board[row + direction][col] == "--":
-            moves.append(Move((row, col), (row + direction, col), self.board))
+            if col - 1 >= 0:
+                if self.board[row - 1][col - 1][0] == 'b':
+                    moves.append(Move((row, col), (row - 1, col -1 ), self.board))
+            if col + 1 <= 7:
+                if self.board[row - 1][col + 1][0] == 'b':
+                    moves.append(Move((row, col), (row - 1, col + 1), self.board))
 
-            # Two squares forward from starting position
-            if row == start_row and self.board[row + 2 * direction][col] == "--":
-                moves.append(Move((row, col), (row + 2 * direction, col), self.board))
+        else:
+            if self.board[row + 1][col] == "--":  # One square pawn advance
+                moves.append(Move((row, col), (row + 1, col), self.board))
+                if row == 1 and self.board[row + 2][col] == "--":  # Two square pawn advance
+                    moves.append(Move((row, col), (row + 2, col), self.board))
 
-        # Capture diagonally
-        for dc in (-1, 1):  # Left and Right diagonals
-            new_col = col + dc
-            if 0 <= new_col < 8 and self.board[row + direction][new_col][0] == enemy_color:
-                moves.append(Move((row, col), (row + direction, new_col), self.board))
-
+            if col - 1 >= 0:
+                if self.board[row + 1][col - 1][0] == 'w':
+                    moves.append(Move((row, col), (row + 1, col -1 ), self.board))
+            if col + 1 <= 7:
+                if self.board[row + 1][col + 1][0] == 'w':
+                    moves.append(Move((row, col), (row + 1, col + 1), self.board))
 
     def get_rook_moves(self, row, col, moves):
         enemy_color = "b" if self.whiteToMove else "w"  # Determine opponent's pieces
@@ -104,6 +106,29 @@ class GameState:
 
                 new_row += direction_row
                 new_col += direction_col  # Continue in the same direction
+
+    def get_rook_moves_2(self, row, col, moves):
+        enemy_color = "b" if self.whiteToMove else "w"  # Determine opponent's pieces
+        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]  # Up, Down, Left, Right
+
+        for d in directions:
+            for i in range (1, 8):
+                end_row = row + d[0] * i
+                end_col = col + d[1] * i
+
+                if 0 <= end_row < 8 and 0 <= end_col < 8:
+                    end_piece = self.board[end_row][end_col]
+                    if end_piece == "--":
+                        moves.append(Move((row, col), (end_row, end_col), self.board))
+                    elif end_piece[0] == enemy_color:
+                        moves.append(Move((row, col), (end_row, end_col), self.board))
+                        break
+                    else:
+                        break
+                else:
+                    break
+
+
 
     def get_knight_moves(self, row, col, moves):
         enemy_color = "b" if self.whiteToMove else "w"  # Determine opponent's pieces
@@ -171,3 +196,26 @@ class GameState:
 
                 new_row += direction_row
                 new_col += direction_col  # Continue in the same direction
+
+
+    def get_king_moves(self, row, col, moves):
+        enemy_color = "b" if self.whiteToMove else "w"  # Determine opponent's pieces
+
+        directions = [(0, -1), (0, 1), (1, 0), (-1, 0), (-1, 0),
+                      (-1, -1), (-1, 1), (1, -1), (1, 1)]
+
+        for direction_row, direction_col in directions:
+            new_row, new_col = row + direction_row, col + direction_col
+
+            while 0 <= new_row <= 7 and 0 <= new_col <= 7:  # Stay within board limits
+                if self.board[new_row][new_col] == "--":
+                    moves.append(Move((row, col), (new_row, new_col), self.board))  # Empty square
+
+                elif self.board[new_row][new_col][0] == enemy_color:
+                    moves.append(Move((row, col), (new_row, new_col), self.board))  # Capture enemy piece
+                    break  # Stop after capturing
+
+                else:
+                    break  # Stop at friendly piece
+
+                break
