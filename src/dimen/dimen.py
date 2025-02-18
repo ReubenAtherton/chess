@@ -12,7 +12,7 @@ DOTS = {}
 BACKGROUND_COLOR = p.Color("white")
 
 SQUARE_COLOUR = p.Color("beige")
-SQUARE_COLOUR_2 = p.Color("palegreen4")
+SQUARE_COLOUR_2 = p.Color("turquoise4")
 SQUARE_SELECTED_COLOUR = p.Color("slategray3")
 SQUARE_VALID_MOVE_COLOUR = p.Color("honeydew2")
 
