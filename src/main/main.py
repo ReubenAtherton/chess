@@ -96,13 +96,13 @@ def draw_board(screen, board, sq_selected, valid_moves):
                     if (move.start_row, move.start_col) == sq_selected:
                         if (row, col) == (move.end_row, move.end_col):
 
-                            # Empty tile
+                            # Show empty tile to move onto
                             if board[row][col] == "--":
                                 dot_x = col * SQ_SIZE + (SQ_SIZE - DOTS[0].get_width()) // 2
                                 dot_y = row * SQ_SIZE + (SQ_SIZE - DOTS[0].get_height()) // 2
                                 screen.blit(DOTS[0], (dot_x, dot_y))
 
-                            # Occupied tile
+                            # Show occupied tile to capture
                             else:
                                 dot_x = col * SQ_SIZE + (SQ_SIZE - DOTS[1].get_width())
                                 dot_y = row * SQ_SIZE + (SQ_SIZE - DOTS[1].get_height())

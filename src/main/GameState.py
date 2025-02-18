@@ -7,9 +7,9 @@ class GameState:
         self.board = [
             ["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"],
             ["bp", "bp", "bp", "bp", "bp", "bp", "bp", "bp"],
-            ["--", "--", "bR", "--", "--", "--", "--", "--"],
-            ["--", "--", "--", "--", "--", "--", "wR", "--"],
-            ["--", "--", "wR", "--", "bp", "--", "--", "--"],
+            ["--", "--", "--", "--", "--", "--", "--", "--"],
+            ["--", "--", "--", "--", "--", "--", "--", "--"],
+            ["--", "--", "--", "--", "--", "--", "--", "--"],
             ["--", "--", "--", "--", "--", "--", "--", "--"],
             ["wp", "wp", "wp", "wp", "wp", "wp", "wp", "wp"],
             ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"]
@@ -52,6 +52,13 @@ class GameState:
 
                     if piece == 'R':
                         self.get_rook_moves(row, col, moves)
+
+                    if piece == 'N':
+                        self.get_knight_moves(row, col, moves)
+                    #
+                    # if piece == 'B':
+                    #     self.get_bishop_moves(row, col, moves)
+
         return moves
 
     def get_pawn_moves(self, row, col, moves):
@@ -101,3 +108,47 @@ class GameState:
 
                 new_row += direction_row
                 new_col += direction_col  # Continue in the same direction
+
+    def get_knight_moves(self, row, col, moves):
+        enemy_color = "b" if self.whiteToMove else "w"  # Determine opponent's pieces
+
+        directions = [(-2, -1), (-2, 1), (2, -1), (2, 1),
+                      (-1, -2), (-1, 2), (1, -2), (1, 2)]  # Up, Down, Left, Right
+
+        for direction_row, direction_col in directions:
+            new_row, new_col = row + direction_row, col + direction_col
+
+            while 0 <= new_row <= 7 and 0 <= new_col <= 7:  # Stay within board limits
+                if self.board[new_row][new_col] == "--":
+                    moves.append(Move((row, col), (new_row, new_col), self.board))  # Empty square
+
+                elif self.board[new_row][new_col][0] == enemy_color:
+                    moves.append(Move((row, col), (new_row, new_col), self.board))  # Capture enemy piece
+                    break  # Stop after capturing
+
+                else:
+                    break  # Stop at friendly piece
+                break
+
+    #
+    # def get_bishop_moves(self, row, col, moves):
+    #     enemy_color = "b" if self.whiteToMove else "w"  # Determine opponent's pieces
+    #
+    #     directions = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
+    #
+    #     for direction_row, direction_col in directions:
+    #         new_row, new_col = row + direction_row, col + direction_col
+    #
+    #         while 0 <= new_row <= 7 and 0 <= new_col <= 7:  # Stay within board limits
+    #             if self.board[new_row][new_col] == "--":
+    #                 moves.append(Move((row, col), (new_row, new_col), self.board))  # Empty square
+    #
+    #             elif self.board[new_row][new_col][0] == enemy_color:
+    #                 moves.append(Move((row, col), (new_row, new_col), self.board))  # Capture enemy piece
+    #                 break  # Stop after capturing
+    #
+    #             else:
+    #                 break  # Stop at friendly piece
+    #
+    #             new_row += direction_row
+    #             new_col += direction_col  # Continue in the same direction
