@@ -87,7 +87,7 @@ def draw_board(screen, board, sq_selected, valid_moves):
                 colour = SQUARE_SELECTED_COLOUR
 
             # Draw board and pieces
-            p.draw.rect(screen, colour, p.Rect(col *SQ_SIZE, row * SQ_SIZE, SQ_SIZE, SQ_SIZE))
+            p.draw.rect(screen, colour, p.Rect(col * SQ_SIZE, row * SQ_SIZE, SQ_SIZE, SQ_SIZE))
             draw_pieces(screen, board, row, col)
 
             # Draw top layer - valid moves, valid captures
