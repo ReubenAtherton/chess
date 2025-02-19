@@ -23,7 +23,7 @@ class GameState:
         self.moveLog = []
         self.white_king_location = (7, 4)
         self.black_king_location = (0, 4)
-        self.in_check = False
+        self.in_check_var = False
         self.pins = []
         self.checks = []
 
@@ -55,7 +55,8 @@ class GameState:
 
     def get_valid_moves(self):
         moves = []
-        self.in_check, self.pins, self.checks = self.check_for_pins_and_checks()
+        self.in_check_var, self.pins, self.checks = self.check_for_pins_and_checks()
+
         if self.whiteToMove:
             king_row = self.white_king_location[0]
             king_col = self.white_king_location[1]
@@ -63,8 +64,7 @@ class GameState:
             king_row = self.black_king_location[0]
             king_col = self.black_king_location[1]
 
-        if self.in_check:
-
+        if self.in_check_var:
             # Only 1 check = block check or move king
             if len(self.checks) == 1:
                 moves = self.get_all_possible_moves()
@@ -84,10 +84,11 @@ class GameState:
                         if valid_square[0] == check_row and valid_square[1] == check_col:
                             break
 
-                    for i in range(len(moves) -1, -1, -1):
-                        if moves[i].piece_moved[1] != 'K':
-                            if not (moves[i].end_row, moves[i].end_col) in valid_squares:
-                                moves.remove(moves[i])
+                for i in range(len(moves) -1, -1, -1):
+                    if moves[i].piece_moved[1] != 'K':
+                        if not (moves[i].end_row, moves[i].end_col) in valid_squares:
+                            moves.remove(moves[i])
+
             # Two or more checks = move king
             else:
                 self.get_king_moves(king_row, king_col, moves)
@@ -101,9 +102,8 @@ class GameState:
     # Complex algo - checks all possible attackers from kings perspective
     # Faster than checking every possible move to see if it attacks king
     def check_for_pins_and_checks(self):
-        pins = []
-        checks = []
-        in_check = False
+        pins, checks  = [], []
+        is_checked_temp = False
 
         if self.whiteToMove:
             enemy_colour = "b"
@@ -125,7 +125,7 @@ class GameState:
             for i in range (1, 8):
                 end_row = start_row + d[0] * i
                 end_col = start_col + d[1] * i
-                if 0 <= end_row <= 7 and 0 <= end_col <= 7:
+                if 0 <= end_row < 8 and 0 <= end_col < 8:
                     end_piece = self.board[end_row][end_col]
                     if end_piece[0] == friendly_colour and end_piece[1] != 'K':
                         if possible_pins == ():
@@ -133,7 +133,7 @@ class GameState:
                         else:
                             break
                     elif end_piece[0] == enemy_colour:
-                        piece_type = end_piece[1]
+                        enemy_type = end_piece[1]
                         # 5 possibilities here in complex conditional
 
                         # 1. orthogonally away from king and piece is a rook
@@ -142,12 +142,13 @@ class GameState:
                         # 4. any direction away from king and piece is queen
                         # 5. any direction 1 square away and piece is king (necessary to prevent a king move here)
 
-                        if (0 <= j <= 3 and piece_type == "R") or (4 <= j <= 7 and piece_type == "B") or (
-                                i == 1 and piece_type == "p" and (
-                                (piece_type == "w" and 6 <= j <= 7) or (piece_type == "b" and 4 <= j <= 5))) or (
-                                piece_type == "Q") or (i == 1 and piece_type == "K"):
+                        # 5.) any direction 1 square away and piece is a king
+                        if (0 <= j <= 3 and enemy_type == "R") or (4 <= j <= 7 and enemy_type == "B") or (
+                                i == 1 and enemy_type == "p" and (
+                                (enemy_colour == "w" and 6 <= j <= 7) or (enemy_colour == "b" and 4 <= j <= 5))) or (
+                                enemy_type == "Q") or (i == 1 and enemy_type == "K"):
                             if possible_pins == ():
-                                in_check = True
+                                is_checked_temp = True
                                 checks.append((end_row, end_col, d[0], d[1]))
                                 break
                             else:
@@ -158,19 +159,21 @@ class GameState:
                 else:
                     break # if off board
 
-        knight_moves = ((-2, -1), (-2, 1), (-1, 2), (1, 2), (2, -1), (2, 1), (-1, -2), (1, -2))
+        knight_moves = ((-2, -1), (-2, 1), (-1, -2), (-1, 2), (1, -2), (1, 2), (2, -1), (2, 1))
         for move in knight_moves:
             end_row = start_row + move[0]
             end_col = start_col + move[1]
+
             if 0 <= end_row < 8 and 0 <= end_col < 8:
                 end_piece = self.board[end_row][end_col]
                 if end_piece[0] == enemy_colour and end_piece[1] == 'N':  # enemy knight attacking a king
-                    in_check = True
+                    is_checked_temp = True
                     checks.append((end_row, end_col, move[0], move[1]))
-        return in_check, pins, checks
+
+        return is_checked_temp, pins, checks
 
     # Determines if current player is in check
-    def in_check(self):
+    def inCheck(self):
         if self.whiteToMove:
             return self.square_under_attack(self.white_king_location[0], self.white_king_location[1])
         else:
@@ -276,10 +279,7 @@ class GameState:
         """
         Generates all possible knight moves from the given (row, col).
         """
-        knight_moves = [
-            (-2, -1), (-2, 1), (-1, 2), (1, 2),
-            (2, -1), (2, 1), (-1, -2), (1, -2)
-        ]
+        knight_moves = [(-2, -1), (-2, 1), (-1, 2), (1, 2), (2, -1), (2, 1), (-1, -2), (1, -2)]
 
         ally_color = 'w' if self.whiteToMove else 'b'
 
@@ -331,6 +331,9 @@ class GameState:
                 new_col += direction_col  # Continue moving in the same direction
 
     def get_queen_moves(self, row, col, moves):
+        """
+        Get all the queen moves for the queen located at row col and add the moves to the list.
+        """
         self.get_rook_moves(row, col, moves)
         self.get_bishop_moves(row, col, moves)
 
