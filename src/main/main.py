@@ -5,7 +5,6 @@ from src.dimen.dimen import DIMENSION, IMAGES, WIDTH, HEIGHT, SQ_SIZE, MAX_FPS, 
 from src.main.GameState import GameState
 from src.main.Move import Move
 
-
 def main():
     p.init()
     screen = p.display.set_mode((WIDTH, HEIGHT))

@@ -42,6 +42,9 @@ class GameState:
         elif move.piece_moved == 'bK':
             self.black_king_location = (move.end_row, move.end_col)
 
+        if move.is_pawn_promotion:
+            self.board[move.end_row][move.end_col] = move.piece_moved[0] + 'Q'
+
     def undo_move(self):
         if len(self.moveLog) != 0:
             move = self.moveLog.pop()
@@ -290,20 +293,27 @@ class GameState:
 
     def get_knight_moves(self, row, col, moves):
         """
-        Generates all possible knight moves from the given (row, col).
+        Get all the knight moves for the knight located at row col and add the moves to the list.
         """
-        knight_moves = [(-2, -1), (-2, 1), (-1, 2), (1, 2), (2, -1), (2, 1), (-1, -2), (1, -2)]
+        piece_pinned = False
 
-        ally_color = 'w' if self.whiteToMove else 'b'
+        for i in range(len(self.pins) - 1, -1, -1):
+            if self.pins[i][0] == row and self.pins[i][1] == col:
+                piece_pinned = True
+                self.pins.remove(self.pins[i])
+                break
 
+        knight_moves = ((-2, -1), (-2, 1), (-1, 2), (1, 2), (2, -1), (2, 1), (-1, -2), (1, -2))
+
+        ally_color = "w" if self.whiteToMove else "b"
         for move in knight_moves:
-            new_row = row + move[0]
-            new_col = col + move[1]
-
-            if 0 <= new_row < 8 and 0 <= new_col < 8:  # Stay within bounds
-                destination_piece = self.board[new_row][new_col]
-                if destination_piece[0] != ally_color:  # Can move if empty or capturing enemy piece
-                    moves.append(Move((row, col), (new_row, new_col), self.board))
+            end_row = row + move[0]
+            end_col = col + move[1]
+            if 0 <= end_row <= 7 and 0 <= end_col <= 7:
+                if not piece_pinned:
+                    end_piece = self.board[end_row][end_col]
+                    if end_piece[0] != ally_color:  # so its either enemy piece or empty square
+                        moves.append(Move((row, col), (end_row, end_col), self.board))
 
     def get_bishop_moves(self, row, col, moves):
         """

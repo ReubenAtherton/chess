@@ -23,6 +23,9 @@ class Move:
         self.piece_moved = board[self.start_row][self.start_col]
         self.piece_captured = board[self.end_row][self.end_col]
         self.move_id = (self.start_row * 1000) + (self.start_col * 100) + (self.end_row * 10) + self.end_col
+        self.is_pawn_promotion = False
+        if (self.piece_moved == 'wp' and self.end_row == 0) or (self.piece_moved == 'bp' and self.end_row == 7):
+            self.is_pawn_promotion = True
 
     def __eq__(self, other):
         if isinstance(other, Move):
