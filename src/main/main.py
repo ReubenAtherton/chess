@@ -60,6 +60,9 @@ def main():
             valid_moves = game_state.get_valid_moves()
             move_made = False
 
+        if game_state.check_mate or game_state.stale_mate:
+            running = False
+
         draw_game_state(screen, game_state, sq_selected, valid_moves)
         clock.tick(MAX_FPS)
         p.display.flip()

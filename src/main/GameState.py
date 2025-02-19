@@ -26,6 +26,8 @@ class GameState:
         self.in_check_var = False
         self.pins = []
         self.checks = []
+        self.check_mate = False
+        self.stale_mate = False
 
     # Takes a move as a parameter and executes it
     def make_move(self, move):
@@ -96,6 +98,17 @@ class GameState:
         # No check = all moves are valid
         else:
             moves = self.get_all_possible_moves()
+
+        if len(moves) == 0:
+            if self.inCheck():
+                self.check_mate = True
+            else:
+                self.stale_mate = True
+
+        # In case player undoes check/stale mate move - could move to undo move
+        else:
+            self.check_mate = False
+            self.stale_mate = False
 
         return moves
 
