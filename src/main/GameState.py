@@ -28,6 +28,7 @@ class GameState:
         self.checks = []
         self.check_mate = False
         self.stale_mate = False
+        self.enpassant_possible = () # co-ords for square where enpassant capture is possible
 
     # Takes a move as a parameter and executes it
     def make_move(self, move):
@@ -45,6 +46,15 @@ class GameState:
         if move.is_pawn_promotion:
             self.board[move.end_row][move.end_col] = move.piece_moved[0] + 'Q'
 
+        if move.is_enpassant_move:
+            self.board[move.start_row][move.end_col] = '--'
+
+        # Update enpassant possible var
+        if move.piece_moved[1] == 'p' and abs(move.start_row - move.end_row) == 2:
+            self.enpassant_possible = ((move.start_row + move.end_row) // 2, move.start_col)
+        else:
+            self.enpassant_possible = ()
+
     def undo_move(self):
         if len(self.moveLog) != 0:
             move = self.moveLog.pop()
@@ -57,6 +67,14 @@ class GameState:
 
             elif move.piece_moved == 'bK':
                 self.black_king_location = (move.start_row, move.start_col)
+
+            if move.is_enpassant_move:
+                self.board[move.end_row][move.end_col] = '--'
+                self.board[move.start_row][move.end_col] = move.piece_captured
+                self.enpassant_possible = (move.end_row, move.end_col)
+
+            # if move.piece_moved[1] == 'p' and abs(move.start_row - move.end_row) == 2:
+            #     self.enpassant_possible = ()
 
     def get_valid_moves(self):
         moves = []
@@ -235,7 +253,7 @@ class GameState:
         # Determine movement direction (White moves up, Black moves down)
         direction = -1 if self.whiteToMove else 1
         start_row = 6 if self.whiteToMove else 1  # Starting row for double move
-        enemy_color = 'b' if self.whiteToMove else 'w'
+        enemy_colour = 'b' if self.whiteToMove else 'w'
 
         # Single and double pawn advance (only if not blocked)
         if not piece_pinned or pin_direction == (direction, 0):
@@ -249,9 +267,15 @@ class GameState:
         for dc in [-1, 1]:  # Left (-1) and right (1) diagonal captures
             new_col = col + dc
             if 0 <= new_col < 8:  # Ensure within board limits
-                if self.board[row + direction][new_col][0] == enemy_color:  # Enemy piece to capture
+                if self.board[row + direction][new_col][0] == enemy_colour:  # Enemy piece to capture
                     if not piece_pinned or pin_direction == (direction, dc):
                         moves.append(Move((row, col), (row + direction, new_col), self.board))
+                elif (row + direction, new_col) == self.enpassant_possible:
+                    moves.append(Move((row, col), (row + direction, new_col), self.board, is_enpassant_move=True))
+
+                elif (row - direction, new_col) == self.enpassant_possible:
+                    moves.append(Move((row, col), (row - direction, new_col), self.board, is_enpassant_move=True))
+
 
     def get_rook_moves(self, row, col, moves):
         """
