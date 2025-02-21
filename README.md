@@ -1,6 +1,6 @@
 # Chess Engine ♟️
 
-## How it works 🛠️ :
+## How it works 🛠 :
 
 ### Piece Moving Calculation ➡️ ⬇️ :
 *Explanation pending...*
