@@ -38,13 +38,13 @@ def main():
                     player_clicks.append(sq_selected)
 
                 if len(player_clicks) == 2:
-                    move = Move(player_clicks[0], player_clicks[1], game_state.board)
+                    move = Move(player_clicks[0], player_clicks[1], game_state.board)   # Create the move
 
-                    for i in range(len(valid_moves)):
+                    for i in range(len(valid_moves)):   # Check the move is a valid move
                         if move == valid_moves[i]:
                             game_state.make_move(valid_moves[i])
                             move_made = True
-                            sq_selected = () # Resets the user clicks
+                            sq_selected = ()    # Resets the user clicks
                             player_clicks = []
 
                     if not move_made:
