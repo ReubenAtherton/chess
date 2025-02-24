@@ -19,25 +19,20 @@ board state.
 * Rooks move vertically or horizontally in straight lines until they hit a piece. They can capture enemy pieces in their path but stop moving after capturing.
 
 #### Knight Moves:
-[ [-2, -1], [-2, 1], [-1, 2], [1, 2], [2, -1], [2, 1], [-1, -2], [1, -2] ]
-<br/>
-Knights move in an L-shape: two squares in one direction and then one square perpendicular to it. They are the only piece that can jump over other pieces.
-<br/>
+* [ [-2, -1], [-2, 1], [-1, 2], [1, 2], [2, -1], [2, 1], [-1, -2], [1, -2] ]
+* Knights move in an L-shape: two squares in one direction and then one square perpendicular to it. They are the only piece that can jump over other pieces.
+
 #### Bishop Moves:
-[ [-1, -1], [-1, 1], [1, 1], [1, -1] ]
-<br/>
-Bishops move diagonally in any direction as far as possible without obstacles. They stay on the same color square throughout the game.
-<br/>
+* [ [-1, -1], [-1, 1], [1, 1], [1, -1] ]
+* Bishops move diagonally in any direction as far as possible without obstacles. They stay on the same color square throughout the game.
+
 #### Queen Moves:
-[ [-1, 0], [0, -1], [1, 0], [0, 1], [-1, -1], [-1, 1], [1, 1], [1, -1] ]
-<br/>
-The queen combines rook and bishop movement, meaning it can move vertically, horizontally, and diagonally in any direction.
-<br/>
+* [ [-1, 0], [0, -1], [1, 0], [0, 1], [-1, -1], [-1, 1], [1, 1], [1, -1] ]
+* The queen combines rook and bishop movement, meaning it can move vertically, horizontally, and diagonally in any direction.
+
 #### King Moves:
-[ [-1, 0], [0, -1], [1, 0], [0, 1] ]
-<br/>
-The king moves one square in any direction but cannot move into check. The code ensures the move is legal by checking for threats.
-<br/>
+* [ [-1, 0], [0, -1], [1, 0], [0, 1] ]
+* The king moves one square in any direction but cannot move into check. The code ensures the move is legal by checking for threats.
+
 ### Pins 📍 and Checks ✅:
 *Explanation pending...*
-
