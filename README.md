@@ -8,9 +8,9 @@ Each of the following piece’s movement also accounts for pins and checks, ensu
 board state.  
 
 #### Pawn Moves:
-[ [1, 0], [-1, 0], [2, 0], [-2, 0] ]
+* [ [1, 0], [-1, 0], [2, 0], [-2, 0] ]
 <br/>
-Pawns move forward one square unless it’s their first move, where they can move two squares. They capture diagonally one square to the left or right. En passant is handled when an adjacent pawn moves two squares forward.
+* Pawns move forward one square unless it’s their first move, where they can move two squares. They capture diagonally one square to the left or right. En passant is handled when an adjacent pawn moves two squares forward.
 <br/>
 #### Rook Moves:
 [ [-1, 0], [0, -1], [1, 0], [0, 1] ]
