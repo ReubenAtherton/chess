@@ -11,7 +11,7 @@ class GameState:
             ["--", "--", "--", "--", "--", "--", "--", "--"],
             ["--", "--", "--", "--", "--", "--", "--", "--"],
             ["--", "--", "--", "--", "--", "--", "--", "--"],
-            ["wp", "wp", "wp", "--", "wp", "wp", "wp", "wp"],
+            ["wp", "wp", "wp", "wp", "wp", "wp", "wp", "wp"],
             ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"]
         ]
 
@@ -37,7 +37,7 @@ class GameState:
         self.moveLog.append(move)
         self.whiteToMove = not self.whiteToMove
 
-        if move.piece_moved =='wK':
+        if move.piece_moved == 'wK':
             self.white_king_location = (move.end_row, move.end_col)
 
         elif move.piece_moved == 'bK':
@@ -72,9 +72,6 @@ class GameState:
                 self.board[move.end_row][move.end_col] = '--'
                 self.board[move.start_row][move.end_col] = move.piece_captured
                 self.enpassant_possible = (move.end_row, move.end_col)
-
-            # if move.piece_moved[1] == 'p' and abs(move.start_row - move.end_row) == 2:
-            #     self.enpassant_possible = ()
 
     def get_valid_moves(self):
         moves = []
@@ -121,7 +118,7 @@ class GameState:
             moves = self.get_all_possible_moves()
 
         if len(moves) == 0:
-            if self.inCheck():
+            if self.in_check():
                 self.check_mate = True
             else:
                 self.stale_mate = True
@@ -151,6 +148,7 @@ class GameState:
             start_row = self.black_king_location[0]
             start_col = self.black_king_location[1]
 
+        # All moves king can be attacked from
         directions = ((-1, 0), (0, -1), (1, 0), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1))
 
         for j in range(len(directions)):
@@ -161,22 +159,14 @@ class GameState:
                 end_col = start_col + d[1] * i
                 if 0 <= end_row < 8 and 0 <= end_col < 8:
                     end_piece = self.board[end_row][end_col]
-                    if end_piece[0] == friendly_colour: # and end_piece[1] != "K": removed here (??)
+                    if end_piece[0] == friendly_colour and end_piece[1] != "K":
                         if possible_pins == ():
                             possible_pins = (end_row, end_col, d[0], d[1])
                         else:
                             break
                     elif end_piece[0] == enemy_colour:
                         enemy_type = end_piece[1]
-                        # 5 possibilities here in complex conditional
-
-                        # 1. orthogonally away from king and piece is a rook
-                        # 2. diagonally away from king and piece is bishop
-                        # 3. 1 sq away diagonally from king and piece is pawn
-                        # 4. any direction away from king and piece is queen
-                        # 5. any direction 1 square away and piece is king (necessary to prevent a king move here)
-
-                        # 5.) any direction 1 square away and piece is a king
+                        # Checks the 5 possibilities here in complex conditional
                         if (
                                 (0 <= j <= 3 and enemy_type == "R") # Rook check using 0, 1, 2 and 3 indexes of directions list above
                                 or (4 <= j <= 7 and enemy_type == "B") # Bishop check using 4, 5, 6 and 7  indexes of directions list above
@@ -195,7 +185,7 @@ class GameState:
                         else:
                             break
                 else:
-                    break # if off board
+                    break # If off board
 
         knight_moves = ((-2, -1), (-2, 1), (-1, -2), (-1, 2), (1, -2), (1, 2), (2, -1), (2, 1))
         for move in knight_moves:
@@ -211,7 +201,7 @@ class GameState:
         return is_checked_temp, pins, checks
 
     # Determines if current player is in check
-    def inCheck(self):
+    def in_check(self):
         if self.whiteToMove:
             return self.square_under_attack(self.white_king_location[0], self.white_king_location[1])
         else:
@@ -290,8 +280,7 @@ class GameState:
             if self.pins[i][0] == row and self.pins[i][1] == col:
                 piece_pinned = True
                 pin_direction = (self.pins[i][2], self.pins[i][3])
-                if self.board[row][col][
-                    1] != "Q":  # can't remove queen from pin on rook moves, only remove it on bishop moves
+                if self.board[row][col][1] != "Q":  # can't remove queen from pin on rook moves, only remove it on bishop moves
                     self.pins.remove(self.pins[i])
                 break
 

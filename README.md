@@ -4,15 +4,9 @@
 
 ### Piece Moving Calculation ⬇️ ⬆️:
 
-Each of the following piece’s movement also accounts for pins and checks, ensuring legal moves based on the current
-board state.
-
 #### Pawn Moves:
-* [ [1, 0], [-1, 0], [2, 0], [-2, 0] ]
-
-
+* [ [1, 0], [-1, 0], [2, 0], [-2, 0], [-1, 1], [-1, -1], [1, -1], [1, -1]] 
 * Pawns move forward one square unless it’s their first move, where they can move two squares. They capture diagonally one square to the left or right. En passant is handled when an adjacent pawn moves two squares forward.
-
 
 #### Rook Moves:
 * [ [-1, 0], [0, -1], [1, 0], [0, 1] ]
