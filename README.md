@@ -5,18 +5,19 @@
 ### Piece Moving Calculation ⬇️ ⬆️:
 
 Each of the following piece’s movement also accounts for pins and checks, ensuring legal moves based on the current
-board state.  
+board state.
 
 #### Pawn Moves:
 * [ [1, 0], [-1, 0], [2, 0], [-2, 0] ]
-<br/>
+
+
 * Pawns move forward one square unless it’s their first move, where they can move two squares. They capture diagonally one square to the left or right. En passant is handled when an adjacent pawn moves two squares forward.
-<br/>
+
+
 #### Rook Moves:
-[ [-1, 0], [0, -1], [1, 0], [0, 1] ]
-<br/>
-Rooks move vertically or horizontally in straight lines until they hit a piece. They can capture enemy pieces in their path but stop moving after capturing.
-<br/>
+* [ [-1, 0], [0, -1], [1, 0], [0, 1] ]
+* Rooks move vertically or horizontally in straight lines until they hit a piece. They can capture enemy pieces in their path but stop moving after capturing.
+
 #### Knight Moves:
 [ [-2, -1], [-2, 1], [-1, 2], [1, 2], [2, -1], [2, 1], [-1, -2], [1, -2] ]
 <br/>
