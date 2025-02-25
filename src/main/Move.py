@@ -15,7 +15,7 @@ class Move:
     # Reverses the conversion for converting col -> files
     cols_to_files = { value: key for key, value in files_to_cols.items() }
 
-    def __init__(self, start_sq, end_sq, board, is_enpassant_move = False):
+    def __init__(self, start_sq, end_sq, board, is_enpassant_move = False, is_castle_move = False):
         self.start_row = start_sq[0]
         self.start_col = start_sq[1]
         self.end_row = end_sq[0]
@@ -27,6 +27,7 @@ class Move:
         self.is_enpassant_move = is_enpassant_move
         if self.is_enpassant_move:
             self.piece_captured = "wp" if self.piece_moved == "bp" else "bp"
+        self.is_castle_move = is_castle_move
 
 
     def __eq__(self, other):
