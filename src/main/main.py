@@ -56,7 +56,6 @@ def main():
 
 
             elif event.type == p.KEYDOWN:
-
                 # Undo move
                 if event.key == p.K_LEFT:
                     game_state.undo_move()
