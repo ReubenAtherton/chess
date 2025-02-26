@@ -11,8 +11,8 @@ DOTS = {}
 
 BACKGROUND_COLOR = p.Color("white")
 
-SQUARE_COLOUR = p.Color("beige")
-SQUARE_COLOUR_2 = p.Color("pale green4")
+BOARD_SQUARE_COLOUR = p.Color("beige")
+BOARD_SQUARE_COLOUR_2 = p.Color("pale green4")
 SQUARE_SELECTED_COLOUR = p.Color("slate gray3")
 SQUARE_VALID_MOVE_COLOUR = p.Color("honeydew2")
 

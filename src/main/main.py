@@ -1,7 +1,7 @@
 import pygame as p
 
-from src.dimen.dimen import DIMENSION, IMAGES, WIDTH, HEIGHT, SQ_SIZE, MAX_FPS, BACKGROUND_COLOR, SQUARE_COLOUR, \
-    SQUARE_SELECTED_COLOUR, SQUARE_COLOUR_2, SCALER, DOTS
+from src.dimen.dimen import DIMENSION, IMAGES, WIDTH, HEIGHT, SQ_SIZE, MAX_FPS, BACKGROUND_COLOR, BOARD_SQUARE_COLOUR, \
+    SQUARE_SELECTED_COLOUR, BOARD_SQUARE_COLOUR_2, SCALER, DOTS
 from src.main.GameState import GameState
 from src.main.Move import Move
 
@@ -86,9 +86,9 @@ def draw_board(screen, board, sq_selected, valid_moves):
         for col in range(DIMENSION):
             # Set board colours
             if (row + col) % 2 == 0:
-                colour = SQUARE_COLOUR
+                colour = BOARD_SQUARE_COLOUR
             else:
-                colour = SQUARE_COLOUR_2
+                colour = BOARD_SQUARE_COLOUR_2
 
             # Highlight selected square
             if (row, col) == sq_selected:
@@ -120,9 +120,6 @@ def draw_pieces(screen, board, row, col):
             piece = board[row][col]
             if piece != "--":
                 screen.blit(IMAGES[piece], p.Rect(col * SQ_SIZE, row * SQ_SIZE, SQ_SIZE // SCALER, SQ_SIZE //SCALER))
-
-def draw_valid_moves():
-    pass
 
 if __name__ == "__main__":
     main()
