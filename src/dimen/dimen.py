@@ -9,6 +9,8 @@ MAX_FPS = 15
 IMAGES = {}
 DOTS = {}
 
+PADDING = 30
+
 BACKGROUND_COLOR = p.Color("white")
 
 BOARD_SQUARE_COLOUR = p.Color("beige")
