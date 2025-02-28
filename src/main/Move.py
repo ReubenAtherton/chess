@@ -29,7 +29,6 @@ class Move:
             self.piece_captured = "wp" if self.piece_moved == "bp" else "bp"
         self.is_castle_move = is_castle_move
 
-
     def __eq__(self, other):
         if isinstance(other, Move):
             return self.move_id == other.move_id

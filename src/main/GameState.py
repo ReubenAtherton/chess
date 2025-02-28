@@ -1,20 +1,12 @@
+from src.main.Board import Board
 from src.main.Castling import Castling
 from src.main.Move import Move
 
 class GameState:
     def __init__(self):
 
-        # chess board set up
-        self.board = [
-            ["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"],
-            ["bp", "bp", "bp", "bp", "bp", "bp", "bp", "bp"],
-            ["--", "--", "--", "--", "--", "--", "--", "--"],
-            ["--", "--", "--", "--", "--", "--", "--", "--"],
-            ["--", "--", "--", "--", "--", "--", "--", "--"],
-            ["--", "--", "--", "--", "--", "--", "--", "--"],
-            ["wp", "wp", "wp", "wp", "wp", "wp", "wp", "wp"],
-            ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"]
-        ]
+        # # chess board set up
+        self.board = Board()
 
         self.move_functions = {'p': self.get_pawn_moves, 'R': self.get_rook_moves,
                                'B': self.get_bishop_moves, 'N': self.get_knight_moves,
