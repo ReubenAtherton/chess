@@ -6,7 +6,7 @@
 ..
 <img width="300" alt="image" src="https://github.com/user-attachments/assets/a9e6b14c-7d19-41aa-a049-c3ee5208e757" />
 
-## Overview:
+## Overview 📁 :
 This is a personal project (work in progress) to follow a Chess engine youtube tutorial, adding my own changes whereever possible.
 
 Additions to be made:
