@@ -1,5 +1,12 @@
 # Chess Engine ♟️
 
+<img width="300" alt="image" src="https://github.com/user-attachments/assets/1c0272f1-97a7-4508-bd22-af00f47c6277" />
+..
+<img width="300" alt="image" src="https://github.com/user-attachments/assets/74af6679-1ea3-48b0-b8e8-724c339bb714" />
+..
+<img width="300" alt="image" src="https://github.com/user-attachments/assets/a9e6b14c-7d19-41aa-a049-c3ee5208e757" />
+
+
 ## How it works 🛠 :
 
 ### Piece Moving Calculation ⬇️ ⬆️:
