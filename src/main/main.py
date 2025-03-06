@@ -22,13 +22,17 @@ def main():
     sq_selected = () #tuple i.e. (row, col)
     player_clicks = [] # two tuples - selecting piece to move (row, col), selecting where to move (row, col)
 
+    player_one = True # if human playing white then True, if AI is playing then False
+    player_two = False # same as above but for black
+
     while running:
+        human_turn = (game_state.whiteToMove and player_one) or (not game_state.whiteToMove and player_two)
         for event in p.event.get():
             if event.type == p.QUIT:
                 running = False
 
             elif event.type == p.MOUSEBUTTONDOWN:
-                if not game_over:
+                if not game_over and human_turn:
                     location = p.mouse.get_pos()
                     col = location[0] // SQ_SIZE
                     row = location[1] // SQ_SIZE
