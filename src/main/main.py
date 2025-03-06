@@ -1,4 +1,5 @@
 import pygame as p
+import ChessAI as ai
 
 from src.dimen.dimen import DIMENSION, IMAGES, WIDTH, HEIGHT, SQ_SIZE, MAX_FPS, BACKGROUND_COLOR, BOARD_SQUARE_COLOUR, \
     SQUARE_SELECTED_COLOUR, BOARD_SQUARE_COLOUR_2, SCALER, DOTS
@@ -22,7 +23,7 @@ def main():
     sq_selected = () #tuple i.e. (row, col)
     player_clicks = [] # two tuples - selecting piece to move (row, col), selecting where to move (row, col)
 
-    player_one = True # if human playing white then True, if AI is playing then False
+    player_one = False # if human playing white then True, if AI is playing then False
     player_two = False # same as above but for black
 
     while running:
@@ -75,6 +76,16 @@ def main():
                     game_over = False  # Reset game over flag
                     move_made = False
                     animate = False
+
+        # AI move finder logic
+        if not game_over and not human_turn:
+            ai_move = ai.find_best_move(game_state, valid_moves)
+            if ai_move is None:
+                print("true")
+                ai_move = ai.find_random_move(valid_moves)
+            game_state.make_move(ai_move)
+            move_made = True
+            animate = True
 
         if move_made:
             if animate:
