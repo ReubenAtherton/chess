@@ -3,8 +3,10 @@ from src.main.Board import Board
 
 from src.dimen.dimen import DIMENSION, IMAGES, WIDTH, HEIGHT, SQ_SIZE, MAX_FPS, BACKGROUND_COLOR, BOARD_SQUARE_COLOUR, \
     SQUARE_SELECTED_COLOUR, BOARD_SQUARE_COLOUR_2, SCALER, DOTS
+from src.main.CheckDetector import CheckDetector
 from src.main.GameState import GameState
 from src.main.Move import Move
+from src.main.MoveValidator import MoveValidator
 
 def main():
     p.init()
@@ -13,8 +15,10 @@ def main():
     screen.fill(BACKGROUND_COLOR)
 
     board = Board()
+    check_detector = CheckDetector(board)
+    move_validator = MoveValidator(check_detector, board)
 
-    game_state = GameState(board)
+    game_state = GameState(board, move_validator, check_detector)
     valid_moves = game_state.get_valid_moves()
     move_made = False # Flag variable for when a move is made
     animate = False
@@ -87,7 +91,7 @@ def main():
 
         if game_state.check_mate:
             game_over = True
-            if game_state.whiteToMove:
+            if game_state.white_to_move:
                 draw_text(screen, "Black wins by checkmate")
             else:
                 draw_text(screen, "White wins by checkmate")

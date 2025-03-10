@@ -2,19 +2,14 @@ from src.main.Castling import Castling
 from src.main.Move import Move
 
 class GameState:
-    def __init__(self, board):
+    def __init__(self, board, move_validator, check_detector):
 
         # # chess board set up
         self.board = board
+        self.move_validator = move_validator
 
-        self.move_functions = {'p': self.get_pawn_moves, 'R': self.get_rook_moves,
-                               'B': self.get_bishop_moves, 'N': self.get_knight_moves,
-                               'Q': self.get_queen_moves, 'K': self.get_king_moves}
-
-        self.whiteToMove = True
+        self.white_to_move = True
         self.moveLog = []
-        self.white_king_location = (7, 4)
-        self.black_king_location = (0, 4)
         self.in_check_var = False
         self.pins = []
         self.checks = []
@@ -31,6 +26,13 @@ class GameState:
                 self.current_castle_rights.b_queen_side
             )
         ]
+        #
+        # self.move_functions = {'p': self.get_pawn_moves, 'R': self.get_rook_moves,
+        #                        'B': self.get_bishop_moves, 'N': self.get_knight_moves,
+        #                        'Q': self.get_queen_moves, 'K': self.get_king_moves}
+
+        self.white_king_location = (7, 4)
+        self.black_king_location = (0, 4)
 
     # Takes a move as a parameter and executes it
     def make_move(self, move):
@@ -39,7 +41,7 @@ class GameState:
         self.board.move_piece(move.end_row, move.end_col, move.piece_moved)
         #self.board[move.end_row][move.end_col] = move.piece_moved
         self.moveLog.append(move)
-        self.whiteToMove = not self.whiteToMove
+        self.white_to_move = not self.white_to_move
 
         if move.piece_moved == 'wK':
             self.white_king_location = (move.end_row, move.end_col)
@@ -107,7 +109,7 @@ class GameState:
             move = self.moveLog.pop()
             self.board.set_piece(move.start_row, move.start_col, move.piece_moved)
             self.board.set_piece(move.end_row, move.end_col, move.piece_captured)
-            self.whiteToMove = not self.whiteToMove
+            self.white_to_move = not self.white_to_move
 
             if move.piece_moved == 'wK':
                 self.white_king_location = (move.start_row, move.start_col)
@@ -141,7 +143,7 @@ class GameState:
         moves = []
         self.in_check_var, self.pins, self.checks = self.check_for_pins_and_checks()
 
-        if self.whiteToMove:
+        if self.white_to_move:
             self.get_castle_moves(self.white_king_location[0], self. white_king_location[1], moves)
             king_row = self.white_king_location[0]
             king_col = self.white_king_location[1]
@@ -153,7 +155,12 @@ class GameState:
         if self.in_check_var:
             # Only 1 check = block check or move king
             if len(self.checks) == 1:
-                moves = self.get_all_possible_moves()
+                moves = self.move_validator.get_all_possible_moves(
+            self.board.board,
+            self.white_to_move,
+            self.pins,
+            self.enpassant_possible
+        )
                 check = self.checks[0]
                 check_row = check[0]
                 check_col = check[1]
@@ -181,8 +188,13 @@ class GameState:
 
         # No check = all moves are valid
         else:
-            moves = self.get_all_possible_moves()
-            if self.whiteToMove:
+            moves = self.move_validator.get_all_possible_moves(
+            self.board.board,
+            self.white_to_move,
+            self.pins,
+            self.enpassant_possible
+        )
+            if self.white_to_move:
                 self.get_castle_moves(self.white_king_location[0], self.white_king_location[1], moves)
             else:
                 self.get_castle_moves(self.black_king_location[0], self.black_king_location[1], moves)
@@ -208,7 +220,7 @@ class GameState:
         pins, checks  = [], []
         is_checked_temp = False
 
-        if self.whiteToMove:
+        if self.white_to_move:
             enemy_colour = "b"
             friendly_colour = "w"
             start_row = self.white_king_location[0]
@@ -274,73 +286,79 @@ class GameState:
 
     # Determines if current player is in check
     def in_check(self):
-        if self.whiteToMove:
+        if self.white_to_move:
             return self.square_under_attack(self.white_king_location[0], self.white_king_location[1])
         else:
             return self.square_under_attack(self.black_king_location[0], self.black_king_location[1])
 
     # Determines if enemy can attack the square (row, col)
     def square_under_attack(self, row, col):
-        self.whiteToMove = not self.whiteToMove
-        opp_moves = self.get_all_possible_moves()
-        self.whiteToMove = not self.whiteToMove
+        self.white_to_move = not self.white_to_move
+        opp_moves = self.move_validator.get_all_possible_moves(
+            self.board.board,
+            self.white_to_move,
+            self.pins,
+            self.enpassant_possible
+        )
+        self.white_to_move = not self.white_to_move
 
         for move in opp_moves:
             if move.end_row == row and move.end_col == col:
                 return True
-
-    def get_all_possible_moves(self):
-        moves = []
-        for row in range(len(self.board.board)):
-            for col in range(len(self.board.board[row])):
-                turn = self.board.get_piece(row, col)[0]
-
-                if (turn == 'w' and self.whiteToMove) or (turn == 'b' and not self.whiteToMove):
-                    piece = self.board.get_piece(row, col)[1]
-
-                    self.move_functions[piece](row, col, moves)
-        return moves
+    #
+    # def get_all_possible_moves(self):
+    #     moves = []
+    #     for row in range(len(self.board.board)):
+    #         for col in range(len(self.board.board[row])):
+    #             turn = self.board.get_piece(row, col)[0]
+    #
+    #             if (turn == 'w' and self.white_to_move) or (turn == 'b' and not self.white_to_move):
+    #                 piece = self.board.get_piece(row, col)[1]
+    #
+    #                 self.move_functions(piece, row, col, moves, self.pins, self.white_to_move, self.enpassant_possible)
+    #     return moves
 
     def get_pawn_moves(self, row, col, moves):
-        """
-        Generates all possible pawn moves from the given (row, col).
-        """
-        piece_pinned = False
-        pin_direction = ()
-
-        # Check if the pawn is pinned
-        for i in range(len(self.pins) - 1, -1, -1):
-            if self.pins[i][0] == row and self.pins[i][1] == col:
-                piece_pinned = True
-                pin_direction = (self.pins[i][2], self.pins[i][3])
-                self.pins.remove(self.pins[i])
-                break
-
-        # Determine movement direction (White moves up, Black moves down)
-        direction = -1 if self.whiteToMove else 1
-        start_row = 6 if self.whiteToMove else 1  # Starting row for double move
-        enemy_colour = 'b' if self.whiteToMove else 'w'
-
-        # Single and double pawn advance (only if not blocked)
-        if not piece_pinned or pin_direction == (direction, 0):
-            if self.board.get_piece(row + direction, col) == "--":  # One square advance
-                moves.append(Move((row, col), (row + direction, col), self.board))
-
-                if row == start_row and self.board.get_piece(row + 2 * direction, col) == "--":  # Two square advance
-                    moves.append(Move((row, col), (row + 2 * direction, col), self.board))
-
-        # Pawn captures (diagonal moves)
-        for dc in [-1, 1]:  # Left (-1) and right (1) diagonal captures
-            new_col = col + dc
-            if 0 <= new_col < 8:  # Ensure within board limits
-                if self.board.get_piece(row + direction, new_col)[0] == enemy_colour:  # Enemy piece to capture
-                    if not piece_pinned or pin_direction == (direction, dc):
-                        moves.append(Move((row, col), (row + direction, new_col), self.board))
-                elif (row + direction, new_col) == self.enpassant_possible:
-                    moves.append(Move((row, col), (row + direction, new_col), self.board, is_enpassant_move=True))
-
-                elif (row - direction, new_col) == self.enpassant_possible:
-                    moves.append(Move((row, col), (row - direction, new_col), self.board, is_enpassant_move=True))
+        # """
+        # Generates all possible pawn moves from the given (row, col).
+        # """
+        # piece_pinned = False
+        # pin_direction = ()
+        #
+        # # Check if the pawn is pinned
+        # for i in range(len(self.pins) - 1, -1, -1):
+        #     if self.pins[i][0] == row and self.pins[i][1] == col:
+        #         piece_pinned = True
+        #         pin_direction = (self.pins[i][2], self.pins[i][3])
+        #         self.pins.remove(self.pins[i])
+        #         break
+        #
+        # # Determine movement direction (White moves up, Black moves down)
+        # direction = -1 if self.whiteToMove else 1
+        # start_row = 6 if self.whiteToMove else 1  # Starting row for double move
+        # enemy_colour = 'b' if self.whiteToMove else 'w'
+        #
+        # # Single and double pawn advance (only if not blocked)
+        # if not piece_pinned or pin_direction == (direction, 0):
+        #     if self.board.get_piece(row + direction, col) == "--":  # One square advance
+        #         moves.append(Move((row, col), (row + direction, col), self.board))
+        #
+        #         if row == start_row and self.board.get_piece(row + 2 * direction, col) == "--":  # Two square advance
+        #             moves.append(Move((row, col), (row + 2 * direction, col), self.board))
+        #
+        # # Pawn captures (diagonal moves)
+        # for dc in [-1, 1]:  # Left (-1) and right (1) diagonal captures
+        #     new_col = col + dc
+        #     if 0 <= new_col < 8:  # Ensure within board limits
+        #         if self.board.get_piece(row + direction, new_col)[0] == enemy_colour:  # Enemy piece to capture
+        #             if not piece_pinned or pin_direction == (direction, dc):
+        #                 moves.append(Move((row, col), (row + direction, new_col), self.board))
+        #         elif (row + direction, new_col) == self.enpassant_possible:
+        #             moves.append(Move((row, col), (row + direction, new_col), self.board, is_enpassant_move=True))
+        #
+        #         elif (row - direction, new_col) == self.enpassant_possible:
+        #             moves.append(Move((row, col), (row - direction, new_col), self.board, is_enpassant_move=True))
+        self.move_validator.get_pawn_moves(row, col, moves, self.pins, self.white_to_move, self.enpassant_possible)
 
     def get_rook_moves(self, row, col, moves):
         """
@@ -357,7 +375,7 @@ class GameState:
                 break
 
         directions = ((-1, 0), (0, -1), (1, 0), (0, 1))  # up, left, down, right
-        enemy_color = "b" if self.whiteToMove else "w"
+        enemy_color = "b" if self.white_to_move else "w"
         for direction in directions:
             for i in range(1, 8):
                 end_row = row + direction[0] * i
@@ -390,7 +408,7 @@ class GameState:
 
         knight_moves = ((-2, -1), (-2, 1), (-1, 2), (1, 2), (2, -1), (2, 1), (-1, -2), (1, -2))
 
-        ally_color = "w" if self.whiteToMove else "b"
+        ally_color = "w" if self.white_to_move else "b"
         for move in knight_moves:
             end_row = row + move[0]
             end_col = col + move[1]
@@ -414,7 +432,7 @@ class GameState:
                 break
 
         directions = ((-1, -1), (-1, 1), (1, 1), (1, -1))  # diagonals: up/left up/right down/right down/left
-        enemy_color = "b" if self.whiteToMove else "w"
+        enemy_color = "b" if self.white_to_move else "w"
         for direction in directions:
             for i in range(1, 8):
                 end_row = row + direction[0] * i
@@ -446,7 +464,7 @@ class GameState:
         """
         row_moves = (-1, -1, -1, 0, 0, 1, 1, 1)
         col_moves = (-1, 0, 1, -1, 1, -1, 0, 1)
-        friendly_colour = "w" if self.whiteToMove else "b"
+        friendly_colour = "w" if self.white_to_move else "b"
         for i in range(8):
             end_row = row + row_moves[i]
             end_col = col + col_moves[i]
@@ -470,12 +488,12 @@ class GameState:
     def get_castle_moves(self, row, col, moves):
         if self.square_under_attack(row, col):
             return # Cannot castle when in check
-        if (self.whiteToMove and self.current_castle_rights.w_king_side) or (
-                not self.whiteToMove and self.current_castle_rights.b_king_side):
+        if (self.white_to_move and self.current_castle_rights.w_king_side) or (
+                not self.white_to_move and self.current_castle_rights.b_king_side):
             self.get_king_side_castle_moves(row, col, moves)
 
-        if (self.whiteToMove and self.current_castle_rights.w_queen_side) or (
-                not self.whiteToMove and self.current_castle_rights.b_queen_side):
+        if (self.white_to_move and self.current_castle_rights.w_queen_side) or (
+                not self.white_to_move and self.current_castle_rights.b_queen_side):
             self.get_queen_side_castle_moves(row, col, moves)
 
     def get_king_side_castle_moves(self, row, col, moves):
