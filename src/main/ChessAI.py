@@ -31,7 +31,7 @@ def find_best_move(game_state, valid_moves):
             elif game_state.stale_mate:
                 score = STALEMATE
             else:
-                score = -turn_multiplier * score_material(game_state.board)
+                score = -turn_multiplier * score_material(game_state.board.board)
             if score > opp_max_score:
                 opp_max_score = score
             game_state.undo_move()
