@@ -18,6 +18,11 @@ BOARD_SQUARE_COLOUR_2 = p.Color("pale green4")
 SQUARE_SELECTED_COLOUR = p.Color("slate gray3")
 SQUARE_VALID_MOVE_COLOUR = p.Color("honeydew2")
 
+piece_score = {'K': 0, 'Q': 10, 'R': 5, 'B': 3, 'N': 3, 'p': 1}
+CHECKMATE = 1000
+STALEMATE = 0
+DIMENSION = 8
+
 # Colours for future choices
 # palegreen4
 # turquoise4
