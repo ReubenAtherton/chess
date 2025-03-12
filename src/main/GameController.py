@@ -1,14 +1,14 @@
 import pygame as p
 
+from src.constants.Colours import BACKGROUND_COLOR, BEIGE, SLATE_GRAY_3, PALE_GREEN_4
+from src.constants.Dimensions import WIDTH, HEIGHT, SQ_SIZE, SCALER
+from src.constants.Operational import DIMENSION, IMAGES, MAX_FPS, DOTS
 from src.main.Board import Board
 from src.main.ChessAI import ChessAI
 from src.main.GameRules import GameRules
+from src.main.Move import Move
 from src.main.MoveValidator import MoveValidator
 
-from src.dimen.dimen import DIMENSION, IMAGES, WIDTH, HEIGHT, SQ_SIZE, MAX_FPS, BACKGROUND_COLOR, BOARD_SQUARE_COLOUR, \
-    SQUARE_SELECTED_COLOUR, BOARD_SQUARE_COLOUR_2, SCALER, DOTS
-
-from src.main.Move import Move
 
 class GameController:
     def __init__(self):
@@ -36,11 +36,11 @@ class GameController:
         for row in range(DIMENSION):
             for col in range(DIMENSION):
                 if (row + col) % 2 == 0:
-                    colour = BOARD_SQUARE_COLOUR
+                    colour = BEIGE
                 else:
-                    colour = BOARD_SQUARE_COLOUR_2
+                    colour = PALE_GREEN_4
                 if (row, col) == sq_selected:
-                    colour = SQUARE_SELECTED_COLOUR
+                    colour = SLATE_GRAY_3
                 p.draw.rect(screen, colour, p.Rect(col * SQ_SIZE, row * SQ_SIZE, SQ_SIZE, SQ_SIZE))
                 self.draw_pieces(screen, row, col)
                 if sq_selected:
@@ -71,7 +71,7 @@ class GameController:
             row = (move.start_row + d_row * (frame / frame_count))
             col = (move.start_col + d_col * (frame / frame_count))
             self.draw_board(screen, sq_selected, valid_moves)
-            colour = BOARD_SQUARE_COLOUR if (move.end_row + move.end_col) % 2 == 0 else BOARD_SQUARE_COLOUR_2
+            colour = BEIGE if (move.end_row + move.end_col) % 2 == 0 else PALE_GREEN_4
             end_square = p.Rect(move.end_col * SQ_SIZE, move.end_row * SQ_SIZE, SQ_SIZE, SQ_SIZE)
             p.draw.rect(screen, colour, end_square)
             screen.blit(IMAGES[move.piece_moved], p.Rect(col * SQ_SIZE, row * SQ_SIZE, SQ_SIZE, SQ_SIZE))
@@ -87,7 +87,7 @@ class GameController:
         rect_x = (WIDTH - rect_width) // 2
         rect_y = (HEIGHT - rect_height) // 2
         text_location = p.Rect(rect_x, rect_y, rect_width, rect_height)
-        p.draw.rect(screen, BOARD_SQUARE_COLOUR, text_location)
+        p.draw.rect(screen, BEIGE, text_location)
         screen.blit(text_object, (rect_x + padding // 2, rect_y + padding // 2))
 
     def main(self):
@@ -157,10 +157,6 @@ class GameController:
 
             if not game_over and not human_turn:
                 ai_move = self.ai.find_best_move(valid_moves)
-                if ai_move:
-                    print(f"AI chose: {ai_move.get_chess_notation()}")
-                else:
-                    print(f"AI chose: {ai_move.get_chess_notation()}")
                 if ai_move is None:
                     ai_move = self.ai.find_random_move(valid_moves)
                 self.game_rules.make_move(ai_move)
