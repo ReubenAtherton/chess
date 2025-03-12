@@ -12,11 +12,11 @@ from src.main.Move import Move
 
 class GameController:
     def __init__(self):
+        self.screen = None
         self.board = Board()
         self.game_rules = GameRules(self.board)
         self.validator = MoveValidator(self.board, self.game_rules)
         self.ai = ChessAI(self.game_rules, self.board)
-        self.screen = p.display.set_mode((WIDTH, HEIGHT))
         self.clock = p.time.Clock()
         self.player_one = True  # Human white
         self.player_two = False  # Human black
@@ -92,17 +92,13 @@ class GameController:
 
     def main(self):
         p.init()
+        self.screen = p.display.set_mode((WIDTH, HEIGHT))
         self.screen.fill(BACKGROUND_COLOR)
-        p.display.flip()  # Show window early
-        p.event.pump()
         valid_moves = self.validator.get_valid_moves()
         move_made = False
         animate = False
         game_over = False
         p.display.set_caption("Chess Game")
-        p.event.post(p.event.Event(p.ACTIVEEVENT, gain=1, state=1))
-        p.mouse.set_pos((WIDTH // 2, HEIGHT // 2))
-        p.event.pump()
         print("Game started.")
         running = True
         sq_selected = ()
@@ -186,5 +182,6 @@ class GameController:
             elif self.game_rules.stale_mate:
                 game_over = True
                 self.draw_text(self.screen, "Draw - stalemate")
+
             self.clock.tick(MAX_FPS)
             p.display.flip()
