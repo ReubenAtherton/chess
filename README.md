@@ -1,7 +1,5 @@
 # Chess Engine ♟️
 
-<img width="300" alt="image" src="https://github.com/user-attachments/assets/1c0272f1-97a7-4508-bd22-af00f47c6277" />
-..
 <img width="300" alt="image" src="https://github.com/user-attachments/assets/74af6679-1ea3-48b0-b8e8-724c339bb714" />
 ..
 <img width="300" alt="image" src="https://github.com/user-attachments/assets/a9e6b14c-7d19-41aa-a049-c3ee5208e757" />
@@ -11,11 +9,10 @@ This is a personal project (work in progress) to follow a Chess engine youtube t
 
 Additions to be made:
 
-* Refactor code to ahdere to best design practises
-* Computer generated best responses to player moves
 * Pregame menu with options to customise game UI
 * Chess notation menu showing game move history
 
+  
 
 ## How it works 🛠 :
 
