@@ -21,6 +21,7 @@ class GameController:
         self.player_one = True  # Human white
         self.player_two = False  # Human black
 
+
     def load_images(self):
         pieces = ['wp', 'wR', 'wN', 'wB', 'wK', 'wQ', 'bp', 'bR', 'bN', 'bB', 'bK', 'bQ']
         for piece in pieces:
@@ -92,14 +93,21 @@ class GameController:
     def main(self):
         p.init()
         self.screen.fill(BACKGROUND_COLOR)
+        p.display.flip()  # Show window early
+        p.event.pump()
         valid_moves = self.validator.get_valid_moves()
         move_made = False
         animate = False
         game_over = False
-        self.load_images()
+        p.display.set_caption("Chess Game")
+        p.event.post(p.event.Event(p.ACTIVEEVENT, gain=1, state=1))
+        p.mouse.set_pos((WIDTH // 2, HEIGHT // 2))
+        p.event.pump()
+        print("Game started.")
         running = True
         sq_selected = ()
         player_clicks = []
+        self.load_images()
         while running:
             human_turn = (self.game_rules.whiteToMove and self.player_one) or \
                         (not self.game_rules.whiteToMove and self.player_two)
@@ -153,6 +161,10 @@ class GameController:
 
             if not game_over and not human_turn:
                 ai_move = self.ai.find_best_move(valid_moves)
+                if ai_move:
+                    print(f"AI chose: {ai_move.get_chess_notation()}")
+                else:
+                    print(f"AI chose: {ai_move.get_chess_notation()}")
                 if ai_move is None:
                     ai_move = self.ai.find_random_move(valid_moves)
                 self.game_rules.make_move(ai_move)

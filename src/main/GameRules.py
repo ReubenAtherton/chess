@@ -63,16 +63,20 @@ class GameRules:
                 self.board.set_piece(move.end_row, move.end_col, '--')
                 self.board.set_piece(move.start_row, move.end_col, move.piece_captured)
                 self.enpassant_possible = (move.end_row, move.end_col)
-            if move.piece_moved[1] == 'R' or 'K':
+            if move.piece_moved[1] == 'R' or move.piece_moved[1] == 'K':  # Fixed syntax
                 self.castle_right_log.pop()
                 self.current_castle_rights = self.castle_right_log[-1]
             if move.is_castle_move:
                 if move.end_col - move.start_col == 2:
-                    self.board.set_piece(move.end_row, move.end_col + 1, self.board.get_piece(move.end_row, move.end_col - 1))
+                    self.board.set_piece(move.end_row, move.end_col + 1,
+                                         self.board.get_piece(move.end_row, move.end_col - 1))
                     self.board.set_piece(move.end_row, move.end_col - 1, '--')
                 else:
-                    self.board.set_piece(move.end_row, move.end_col - 2, self.board.get_piece(move.end_row, move.end_col + 1))
+                    self.board.set_piece(move.end_row, move.end_col - 2,
+                                         self.board.get_piece(move.end_row, move.end_col + 1))
                     self.board.set_piece(move.end_row, move.end_col + 1, '--')
+            self.check_mate = False
+            self.stale_mate = False
 
     def update_castle_rights(self, move):
         if move.piece_moved == 'wK':

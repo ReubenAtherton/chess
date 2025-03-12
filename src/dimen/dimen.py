@@ -23,6 +23,7 @@ CHECKMATE = 1000
 STALEMATE = 0
 DIMENSION = 8
 
+DEPTH = 2
 # Colours for future choices
 # palegreen4
 # turquoise4
