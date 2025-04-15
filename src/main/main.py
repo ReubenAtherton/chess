@@ -1,4 +1,6 @@
 import pygame as p
+import ChessAI as ai
+from src.main.Board import Board
 
 from src.dimen.dimen import DIMENSION, IMAGES, WIDTH, HEIGHT, SQ_SIZE, MAX_FPS, BACKGROUND_COLOR, BOARD_SQUARE_COLOUR, \
     SQUARE_SELECTED_COLOUR, BOARD_SQUARE_COLOUR_2, SCALER, DOTS
@@ -10,7 +12,10 @@ def main():
     screen = p.display.set_mode((WIDTH, HEIGHT))
     clock = p.time.Clock()
     screen.fill(BACKGROUND_COLOR)
-    game_state = GameState()
+
+    board = Board()
+
+    game_state = GameState(board)
     valid_moves = game_state.get_valid_moves()
     move_made = False # Flag variable for when a move is made
     animate = False
@@ -22,13 +27,17 @@ def main():
     sq_selected = () #tuple i.e. (row, col)
     player_clicks = [] # two tuples - selecting piece to move (row, col), selecting where to move (row, col)
 
+    player_one = True # if human playing white then True, if AI is playing then False
+    player_two = False # same as above but for black
+
     while running:
+        human_turn = (game_state.whiteToMove and player_one) or (not game_state.whiteToMove and player_two)
         for event in p.event.get():
             if event.type == p.QUIT:
                 running = False
 
             elif event.type == p.MOUSEBUTTONDOWN:
-                if not game_over:
+                if not game_over and human_turn:
                     location = p.mouse.get_pos()
                     col = location[0] // SQ_SIZE
                     row = location[1] // SQ_SIZE
@@ -71,6 +80,16 @@ def main():
                     game_over = False  # Reset game over flag
                     move_made = False
                     animate = False
+
+        # AI move finder logic
+        if not game_over and not human_turn:
+            ai_move = ai.find_best_move(game_state, valid_moves)
+            if ai_move is None:
+                print("true")
+                ai_move = ai.find_random_move(valid_moves)
+            game_state.make_move(ai_move)
+            move_made = True
+            animate = True
 
         if move_made:
             if animate:
@@ -134,7 +153,7 @@ def draw_board(screen, board, sq_selected, valid_moves):
                         if (row, col) == (move.end_row, move.end_col):
 
                             # Show empty tile to move onto
-                            if board[row][col] == "--":
+                            if board.get_piece(row, col) == "--":
                                 dot_x = col * SQ_SIZE + (SQ_SIZE - DOTS[0].get_width()) // 2
                                 dot_y = row * SQ_SIZE + (SQ_SIZE - DOTS[0].get_height()) // 2
                                 screen.blit(DOTS[0], (dot_x, dot_y))
@@ -146,7 +165,7 @@ def draw_board(screen, board, sq_selected, valid_moves):
                                 screen.blit(DOTS[1], (dot_x, dot_y))
 
 def draw_pieces(screen, board, row, col):
-        piece = board[row][col]
+        piece = board.get_piece(row, col)
         if piece != "--":
             screen.blit(IMAGES[piece], p.Rect(col * SQ_SIZE, row * SQ_SIZE, SQ_SIZE // SCALER, SQ_SIZE //SCALER))
 
