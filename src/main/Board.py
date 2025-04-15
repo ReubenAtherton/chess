@@ -12,7 +12,11 @@ class Board:
         ]
 
     def get_piece(self, row, col):
-        return self.board[row][col]
+        try:
+            if self.board[row][col]:
+                return self.board[row][col]
+        except IndexError:
+            return "--"  # Return a default value (e.g., empty square) if out of bounds
 
     def set_piece(self, row, col, piece):
         self.board[row][col] = piece

@@ -7,6 +7,5 @@ PADDING = 30
 piece_score = {'K': 0, 'Q': 10, 'R': 5, 'B': 3, 'N': 3, 'p': 1}
 CHECKMATE = 1000
 STALEMATE = 0
-DIMENSION = 8
 
 DEPTH = 2
