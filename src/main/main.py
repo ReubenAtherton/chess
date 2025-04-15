@@ -27,7 +27,7 @@ def main():
     sq_selected = () #tuple i.e. (row, col)
     player_clicks = [] # two tuples - selecting piece to move (row, col), selecting where to move (row, col)
 
-    player_one = False # if human playing white then True, if AI is playing then False
+    player_one = True # if human playing white then True, if AI is playing then False
     player_two = False # same as above but for black
 
     while running:
