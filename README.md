@@ -8,6 +8,8 @@
 This is a personal project (work in progress) to follow a Chess engine youtube tutorial, adding my own changes where possible.
 
 Additions to be made:
-
 * Pregame menu with options to customise game UI
 * Chess notation menu showing game move history
+
+To start the game run command:  
+`python3 -m src.main.main` 
