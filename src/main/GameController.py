@@ -31,7 +31,7 @@ class GameController:
 
     def draw_game_state(self, screen, sq_selected, valid_moves):
         self.draw_board(screen, sq_selected, valid_moves)
-        self.draw_menu(screen)
+        #self.draw_menu(screen)
 
     def draw_board(self, screen, sq_selected, valid_moves):
         for row in range(DIMENSION):
@@ -119,7 +119,7 @@ class GameController:
             p.draw.rect(screen, colour, end_square)
             screen.blit(IMAGES[move.piece_moved], p.Rect(col * SQ_SIZE, row * SQ_SIZE, SQ_SIZE, SQ_SIZE))
             p.display.flip()
-            clock.tick(90)
+            clock.tick(120)
 
     def draw_text(self, screen, text):
         font = p.font.SysFont("Helvetica", 32, True, False)
