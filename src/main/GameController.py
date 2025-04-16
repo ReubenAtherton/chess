@@ -25,9 +25,9 @@ class GameController:
     def load_images(self):
         pieces = ['wp', 'wR', 'wN', 'wB', 'wK', 'wQ', 'bp', 'bR', 'bN', 'bB', 'bK', 'bQ']
         for piece in pieces:
-            IMAGES[piece] = p.transform.scale(p.image.load(f"images/{piece}.png"), (SQ_SIZE, SQ_SIZE))
-        DOTS[0] = p.transform.scale(p.image.load("images/circle-move.png"), (SQ_SIZE // 2, SQ_SIZE // 2))
-        DOTS[1] = p.transform.scale(p.image.load("images/circle-capture.png"), (SQ_SIZE, SQ_SIZE))
+            IMAGES[piece] = p.transform.scale(p.image.load(f"src/images/{piece}.png"), (SQ_SIZE, SQ_SIZE))
+        DOTS[0] = p.transform.scale(p.image.load("src/images/circle-move.png"), (SQ_SIZE // 2, SQ_SIZE // 2))
+        DOTS[1] = p.transform.scale(p.image.load("src/images/circle-capture.png"), (SQ_SIZE, SQ_SIZE))
 
     def draw_game_state(self, screen, sq_selected, valid_moves):
         self.draw_board(screen, sq_selected, valid_moves)
