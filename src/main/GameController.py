@@ -20,7 +20,6 @@ class GameController:
         self.clock = p.time.Clock()
         self.player_one = True  # Human white
         self.player_two = False  # Human black
-        self.game_notation = []
 
     def load_images(self):
         pieces = ['wp', 'wR', 'wN', 'wB', 'wK', 'wQ', 'bp', 'bR', 'bN', 'bB', 'bK', 'bQ']
@@ -57,48 +56,6 @@ class GameController:
                                     dot_y = row * SQ_SIZE + (SQ_SIZE - DOTS[1].get_height())
                                     screen.blit(DOTS[1], (dot_x, dot_y))
 
-    def draw_menu(self, screen):
-        # Draw the beige rectangle to the right of the chessboard
-        menu_x = HEIGHT  # 512
-        menu_width = SCREEN_WIDTH - HEIGHT  # 256
-        menu_height = HEIGHT  # 512
-        p.draw.rect(screen, p.Color("cornflowerblue"), p.Rect(menu_x, 0, menu_width, menu_height))
-
-        # Initialize a font
-        font = p.font.SysFont("Helvetica", 30, True, False)
-        notation_font = p.font.SysFont("Helvetica", 15, True, False)
-
-        # Add a title
-        title_text = font.render("Menu", True, p.Color("Black"))
-        screen.blit(title_text, (menu_x + 10, 10))
-
-        # Calculate how many moves fit in the menu
-        max_moves = (menu_height - 40) // 25  # e.g., (512 - 40) // 25 = 18
-
-        # Take only the most recent moves that fit
-        recent_moves = self.game_rules.moveLog[-max_moves:]  # Last 'max_moves' items
-
-        # Display the moves
-        for i, move in enumerate(recent_moves):
-            move_str = move.get_chess_notation() if hasattr(move, 'get_chess_notation') else str(move)
-            move_str = move_str if move_str is not None else ""
-            move_text = notation_font.render(move_str, True, p.Color("Black"))
-            screen.blit(move_text, (menu_x + 10, 40 + i * 25))
-
-        # Add a button (e.g., "New Game")
-        button_width = 100
-        button_height = 30
-        button_x = menu_x + (menu_width - button_width) // 2  # Center horizontally
-        button_y = 150  # Position below the text
-        button_rect = p.Rect(button_x, button_y, button_width, button_height)
-        p.draw.rect(screen, p.Color("Gray"), button_rect)  # Button background
-        button_text = font.render("New Game", True, p.Color("White"))
-        text_rect = button_text.get_rect(center=button_rect.center)  # Center text in button
-        screen.blit(button_text, text_rect)
-
-        # Store the button rect if you want to detect clicks later
-        self.new_game_button = button_rect
-
     def draw_pieces(self, screen, row, col):
         piece = self.board.get_piece(row, col)
         if piece != "--":
@@ -108,7 +65,7 @@ class GameController:
         move = self.game_rules.moveLog[-1]
         d_row = move.end_row - move.start_row
         d_col = move.end_col - move.start_col
-        frames_per_square = 10
+        frames_per_square = 8
         frame_count = (abs(d_row) + abs(d_col)) * frames_per_square
         for frame in range(frame_count + 1):
             row = (move.start_row + d_row * (frame / frame_count))
@@ -119,7 +76,7 @@ class GameController:
             p.draw.rect(screen, colour, end_square)
             screen.blit(IMAGES[move.piece_moved], p.Rect(col * SQ_SIZE, row * SQ_SIZE, SQ_SIZE, SQ_SIZE))
             p.display.flip()
-            clock.tick(120)
+            clock.tick(MAX_FPS)
 
     def draw_text(self, screen, text):
         font = p.font.SysFont("Helvetica", 32, True, False)
@@ -172,8 +129,7 @@ class GameController:
                             for i in range(len(valid_moves)):
                                 if move == valid_moves[i]:
                                     self.game_rules.make_move(valid_moves[i])
-                                    # self.game_notation.append(move.get_chess_notation())
-                                    # self.game_rules.moveLog.append(move.get_chess_notation())
+                                    print(self.game_rules.moveLog[-1].get_chess_notation())
                                     move_made = True
                                     animate = True
                                     sq_selected = ()
@@ -194,7 +150,6 @@ class GameController:
                         self.game_rules = GameRules(self.board)
                         self.validator = MoveValidator(self.board, self.game_rules)
                         self.ai = ChessAI(self.game_rules, self.board)
-                        self.game_notation = []
                         valid_moves = self.validator.get_valid_moves()
                         player_clicks = []
                         game_over = False
@@ -227,3 +182,4 @@ class GameController:
 
             self.clock.tick(MAX_FPS)
             p.display.flip()
+        p.quit()
