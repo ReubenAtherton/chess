@@ -12,4 +12,4 @@ Additions to be made:
 * Chess notation menu showing game move history
 
 To start the game run command:  
-`python3 -m src.main.main` 
+`python3 -m src.main.main`
