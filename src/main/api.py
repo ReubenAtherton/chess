@@ -110,6 +110,10 @@ def player_move(game_id: str):
         if chess_move.piece_moved[0] != current_color:
             return jsonify({'error': 'Not your turn'}), 400
             
+        # Check if this is a castling move
+        if chess_move.piece_moved[1] == 'K' and abs(chess_move.start_col - chess_move.end_col) == 2:
+            chess_move.is_castle_move = True
+            
         game_rules.make_move(chess_move)
         
         return jsonify({
@@ -135,7 +139,9 @@ def ai_move(game_id: str):
             return jsonify({'error': 'Not AI\'s turn'}), 400
             
         valid_moves = validator.get_valid_moves()
-        ai_move = ai.find_best_move(valid_moves) or ai.find_random_move(valid_moves)
+        ai_move = ai.find_best_move(valid_moves)
+        if ai_move is None:
+            ai_move = ai.find_random_move(valid_moves)
         
         if ai_move:
             game_rules.make_move(ai_move)
@@ -164,6 +170,32 @@ def get_status(game_id: str):
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@app.route('/game/<game_id>/possible-moves/<square>', methods=['GET'])
+def get_possible_moves(game_id: str, square: str):
+    try:
+        if game_id not in games:
+            return jsonify({'error': 'Game not found'}), 404
+            
+        game = games[game_id]
+        validator = game['validator']
+        
+        # Get all valid moves for the current position
+        all_valid_moves = validator.get_valid_moves()
+        
+        # Get moves for the selected piece
+        piece_moves, piece_captures = validator.get_peice_valid_moves(square, all_valid_moves)
+        
+        # Convert moves to chess notation
+        moves_notation = [move.get_chess_notation()[2:] for move in piece_moves]
+        captures_notation = [move.get_chess_notation()[2:] for move in piece_captures]
+        
+        return jsonify({
+            'moves': moves_notation,
+            'captures': captures_notation
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080) 
+    app.run(host='0.0.0.0', port=8080)

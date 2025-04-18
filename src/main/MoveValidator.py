@@ -153,6 +153,26 @@ class MoveValidator:
                     self.move_functions[piece](row, col, moves)
         return moves
 
+    def get_peice_valid_moves(self, square: str, valid_moves: list):
+        # Convert square notation to coordinates
+        file = square[0].lower()
+        rank = int(square[1])
+        row = 8 - rank
+        col = ord(file) - ord('a')
+        
+        # Filter moves that start from the selected square
+        piece_moves = []
+        piece_captures = []
+        
+        for move in valid_moves:
+            if move.start_row == row and move.start_col == col:
+                if self.board.get_piece(move.end_row, move.end_col) == "--":
+                    piece_moves.append(move)
+                else:
+                    piece_captures.append(move)
+                    
+        return piece_moves, piece_captures
+
     def get_pawn_moves(self, row, col, moves):
         piece_pinned = False
         pin_direction = ()

@@ -20,6 +20,8 @@ class GameController:
         self.clock = p.time.Clock()
         self.player_one = True  # Human white
         self.player_two = False  # Human black
+        self.cols_to_files = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e', 5: 'f', 6: 'g', 7: 'h'}
+        self.rows_to_ranks = {0: '8', 1: '7', 2: '6', 3: '5', 4: '4', 5: '3', 6: '2', 7: '1'}
 
     def load_images(self):
         pieces = ['wp', 'wR', 'wN', 'wB', 'wK', 'wQ', 'bp', 'bR', 'bN', 'bB', 'bK', 'bQ']
@@ -30,7 +32,6 @@ class GameController:
 
     def draw_game_state(self, screen, sq_selected, valid_moves):
         self.draw_board(screen, sq_selected, valid_moves)
-        #self.draw_menu(screen)
 
     def draw_board(self, screen, sq_selected, valid_moves):
         for row in range(DIMENSION):
@@ -44,18 +45,26 @@ class GameController:
                 p.draw.rect(screen, colour, p.Rect(col * SQ_SIZE, row * SQ_SIZE, SQ_SIZE, SQ_SIZE))
                 self.draw_pieces(screen, row, col)
                 if sq_selected:
-                    for move in valid_moves:
-                        if (move.start_row, move.start_col) == sq_selected:
-                            if (row, col) == (move.end_row, move.end_col):
-                                if self.board.get_piece(row, col) == "--":
-                                    dot_x = col * SQ_SIZE + (SQ_SIZE - DOTS[0].get_width()) // 2
-                                    dot_y = row * SQ_SIZE + (SQ_SIZE - DOTS[0].get_height()) // 2
-                                    screen.blit(DOTS[0], (dot_x, dot_y))
-                                else:
-                                    dot_x = col * SQ_SIZE + (SQ_SIZE - DOTS[1].get_width())
-                                    dot_y = row * SQ_SIZE + (SQ_SIZE - DOTS[1].get_height())
-                                    screen.blit(DOTS[1], (dot_x, dot_y))
-
+                    # Convert selected square to chess notation
+                    square = self.cols_to_files[sq_selected[1]] + self.rows_to_ranks[sq_selected[0]]
+                    
+                    # Get moves for the selected piece
+                    piece_moves, piece_captures = self.validator.get_peice_valid_moves(square, valid_moves)
+                    
+                    # Draw regular moves
+                    for move in piece_moves:
+                        if (row, col) == (move.end_row, move.end_col):
+                            dot_x = col * SQ_SIZE + (SQ_SIZE - DOTS[0].get_width()) // 2
+                            dot_y = row * SQ_SIZE + (SQ_SIZE - DOTS[0].get_height()) // 2
+                            screen.blit(DOTS[0], (dot_x, dot_y))
+                    
+                    # Draw capture moves
+                    for move in piece_captures:
+                        if (row, col) == (move.end_row, move.end_col):
+                            dot_x = col * SQ_SIZE + (SQ_SIZE - DOTS[1].get_width())
+                            dot_y = row * SQ_SIZE + (SQ_SIZE - DOTS[1].get_height())
+                            screen.blit(DOTS[1], (dot_x, dot_y))
+    
     def draw_pieces(self, screen, row, col):
         piece = self.board.get_piece(row, col)
         if piece != "--":
